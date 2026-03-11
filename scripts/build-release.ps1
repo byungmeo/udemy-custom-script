@@ -17,8 +17,24 @@ if (-not (Test-Path $manifestPath)) {
 }
 
 $manifest = Get-Content -Raw -Path $manifestPath | ConvertFrom-Json
+$extensionName = [string]$manifest.name
+
+if ($extensionName -match "^__MSG_(.+)__$") {
+  $messageKey = $Matches[1]
+  $defaultLocale = [string]$manifest.default_locale
+  $localePath = Join-Path $projectRoot "_locales\$defaultLocale\messages.json"
+
+  if (-not (Test-Path $localePath)) {
+    throw "Localized message file was not found: $localePath"
+  }
+
+  $localeMessages = Get-Content -Raw -Path $localePath | ConvertFrom-Json
+  $localizedEntry = $localeMessages.$messageKey
+  $extensionName = [string]$localizedEntry.message
+}
+
 $extensionSlug =
-  (($manifest.name -replace "[^a-zA-Z0-9]+", "-").Trim("-").ToLowerInvariant())
+  (($extensionName -replace "[^a-zA-Z0-9]+", "-").Trim("-").ToLowerInvariant())
 
 if ([string]::IsNullOrWhiteSpace($extensionSlug)) {
   $extensionSlug = "chrome-extension"
@@ -33,6 +49,7 @@ $stagingRoot = Join-Path $OutputRoot "package"
 $zipPath = Join-Path $OutputRoot "$extensionSlug-v$version.zip"
 
 $runtimeEntries = @(
+  "_locales",
   "manifest.json",
   "background",
   "content",
@@ -64,7 +81,11 @@ foreach ($entry in $runtimeEntries) {
   Copy-Item -Path $sourcePath -Destination $destinationPath -Recurse -Force
 }
 
-Compress-Archive -Path (Join-Path $stagingRoot "*") -DestinationPath $zipPath -Force
+$archiveEntries = Get-ChildItem -LiteralPath $stagingRoot -Force | ForEach-Object {
+  $_.FullName
+}
+
+Compress-Archive -Path $archiveEntries -DestinationPath $zipPath -Force
 
 Write-Output "Release package created."
 Write-Output "Staging: $stagingRoot"

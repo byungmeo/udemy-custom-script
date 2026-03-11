@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "Udemy Custom Script"
+  },
+  "extDescription": {
+    "message": "Udemy 강의 대본을 내보내고, 사용자 번역 스크립트를 가져와 플레이어 안에서 커스텀 자막으로 표시합니다."
+  },
+  "actionDefaultTitle": {
+    "message": "Udemy Custom Script"
+  }
+}

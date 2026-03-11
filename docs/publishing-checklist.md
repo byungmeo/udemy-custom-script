@@ -22,6 +22,7 @@
 - Final extension name
 - Final short summary
 - Final detailed description
+- `_locales/en/messages.json` and `_locales/ko/messages.json` checked against the final manifest metadata
 - At least one English and one Korean listing draft if localized store listings will be used
 - Screenshots for popup, options page, and in-player subtitle rendering
 - Privacy disclosure answers

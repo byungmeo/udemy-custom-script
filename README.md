@@ -22,6 +22,7 @@ The extension is built around a user-controlled translation workflow:
 
 ## Project Structure
 
+- `_locales/`: Chrome extension locale resources for manifest and store-facing metadata
 - `background/`: service worker, storage repository, IndexedDB access
 - `content/`: Udemy page integration and subtitle overlay
 - `popup/`: quick export/status actions

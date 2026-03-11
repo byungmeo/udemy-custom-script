@@ -1,0 +1,11 @@
+{
+  "extName": {
+    "message": "Udemy Custom Script"
+  },
+  "extDescription": {
+    "message": "Export Udemy lecture transcripts, import custom translations, and display them as configurable in-player subtitles."
+  },
+  "actionDefaultTitle": {
+    "message": "Udemy Custom Script"
+  }
+}

@@ -1,8 +1,9 @@
 {
-  "name": "Udemy Custom Script",
-  "description": "Export Udemy lecture transcripts, import custom translations, and display them as configurable in-player subtitles.",
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
   "version": "0.1.0",
   "manifest_version": 3,
+  "default_locale": "en",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["https://www.udemy.com/*", "https://*.udemycdn.com/*"],
   "icons": {
@@ -16,7 +17,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Udemy Custom Script",
+    "default_title": "__MSG_actionDefaultTitle__",
     "default_icon": {
       "16": "images/icon-16.png",
       "32": "images/icon-32.png",
