@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Udemy Custom Script Options</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <h1 data-i18n="common.appName">Udemy Custom Script</h1>
+        <p data-i18n="options.heroSubtitle">
+          Manage display preferences, import translated scripts, and inspect the
+          local script library used by the Udemy player overlay.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2 data-i18n="options.playerSettings">Player Settings</h2>
+          <div class="field">
+            <label for="ui-language" data-i18n="options.uiLanguage">Display UI language</label>
+            <select id="ui-language"></select>
+          </div>
+          <div class="field">
+            <label for="subtitle-mode" data-i18n="options.subtitleMode">Subtitle mode</label>
+            <select id="subtitle-mode">
+              <option value="translation_only" data-i18n="options.translationOnly">Translation only</option>
+              <option value="bilingual" data-i18n="options.bilingual">Bilingual</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="subtitle-order" data-i18n="options.bilingualOrder">Bilingual order</label>
+            <select id="subtitle-order">
+              <option value="translation_first" data-i18n="options.translationFirst">Translation first</option>
+              <option value="source_first" data-i18n="options.sourceFirst">Source first</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="overlay-enabled" data-i18n="options.overlay">Overlay</label>
+            <select id="overlay-enabled">
+              <option value="true" data-i18n="common.enabled">Enabled</option>
+              <option value="false" data-i18n="common.disabled">Disabled</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="subtitle-bottom-offset" data-i18n="options.subtitleBottomOffset">Subtitle bottom offset</label>
+            <input id="subtitle-bottom-offset" type="range" min="0" max="120" step="1" />
+            <div class="helper" id="subtitle-bottom-offset-value"></div>
+          </div>
+          <div class="field">
+            <label for="subtitle-line-gap" data-i18n="options.subtitleLineGap">Line gap between translation and source</label>
+            <input id="subtitle-line-gap" type="range" min="0" max="32" step="1" />
+            <div class="helper" id="subtitle-line-gap-value"></div>
+          </div>
+          <div class="actions">
+            <button id="save-settings" data-i18n="options.saveSettings">Save settings</button>
+          </div>
+          <div class="status" id="settings-status"></div>
+        </article>
+
+        <article class="card">
+          <h2 data-i18n="options.translationLine">Translation Line</h2>
+          <div class="field">
+            <label for="translated-font-family" data-i18n="options.fontFamily">Font family</label>
+            <select id="translated-font-family">
+              <option value="system" data-i18n="options.systemSans">System Sans</option>
+              <option value="serif" data-i18n="options.readableSerif">Readable Serif</option>
+              <option value="mono" data-i18n="options.technicalMono">Technical Mono</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="translated-font-size" data-i18n="options.fontSize">Font size</label>
+            <input id="translated-font-size" type="range" min="18" max="42" step="1" />
+            <div class="helper" id="translated-font-size-value"></div>
+          </div>
+          <div class="field">
+            <label for="translated-background-opacity" data-i18n="options.backgroundOpacity">Background opacity</label>
+            <input id="translated-background-opacity" type="range" min="0" max="100" step="1" />
+            <div class="helper" id="translated-background-opacity-value"></div>
+          </div>
+          <div class="field">
+            <label for="translated-padding-x" data-i18n="options.horizontalPadding">Horizontal background padding</label>
+            <input id="translated-padding-x" type="range" min="4" max="40" step="1" />
+            <div class="helper" id="translated-padding-x-value"></div>
+          </div>
+          <div class="field">
+            <label for="translated-padding-y" data-i18n="options.verticalPadding">Vertical background padding</label>
+            <input id="translated-padding-y" type="range" min="2" max="28" step="1" />
+            <div class="helper" id="translated-padding-y-value"></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2 data-i18n="options.sourceLine">Source Line</h2>
+          <div class="field">
+            <label for="source-font-family" data-i18n="options.fontFamily">Font family</label>
+            <select id="source-font-family">
+              <option value="system" data-i18n="options.systemSans">System Sans</option>
+              <option value="serif" data-i18n="options.readableSerif">Readable Serif</option>
+              <option value="mono" data-i18n="options.technicalMono">Technical Mono</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="source-font-size" data-i18n="options.fontSize">Font size</label>
+            <input id="source-font-size" type="range" min="14" max="36" step="1" />
+            <div class="helper" id="source-font-size-value"></div>
+          </div>
+          <div class="field">
+            <label for="source-background-opacity" data-i18n="options.backgroundOpacity">Background opacity</label>
+            <input id="source-background-opacity" type="range" min="0" max="100" step="1" />
+            <div class="helper" id="source-background-opacity-value"></div>
+          </div>
+          <div class="field">
+            <label for="source-padding-x" data-i18n="options.horizontalPadding">Horizontal background padding</label>
+            <input id="source-padding-x" type="range" min="4" max="40" step="1" />
+            <div class="helper" id="source-padding-x-value"></div>
+          </div>
+          <div class="field">
+            <label for="source-padding-y" data-i18n="options.verticalPadding">Vertical background padding</label>
+            <input id="source-padding-y" type="range" min="2" max="28" step="1" />
+            <div class="helper" id="source-padding-y-value"></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2 data-i18n="options.importScript">Import Script</h2>
+          <div class="field">
+            <label for="import-file" data-i18n="options.loadFromFile">Load from file</label>
+            <input id="import-file" type="file" accept=".md,.txt,.json,text/plain" />
+          </div>
+          <div class="field">
+            <label for="import-text" data-i18n="options.pasteCustomScript">Paste a full custom script</label>
+            <textarea
+              id="import-text"
+              data-i18n-placeholder="options.importPlaceholder"
+              placeholder="Paste the exported custom script with the JSON metadata block here."
+            ></textarea>
+          </div>
+          <div class="actions">
+            <button id="import-script" data-i18n="options.importAndSave">Import and save</button>
+            <button class="secondary" id="clear-import" data-i18n="common.clear">Clear</button>
+          </div>
+          <div class="status" id="import-status"></div>
+        </article>
+      </section>
+
+      <section class="card" style="margin-top: 18px">
+        <h2 data-i18n="options.llmGuidance">LLM Guidance</h2>
+        <p class="card-copy" data-i18n="options.llmCardCopy">
+          Control the default translation guidance that is added when you copy a script for GPT,
+          Gemini, or another external LLM.
+        </p>
+        <div class="field">
+          <label for="llm-target-language" data-i18n="options.preferredTargetLanguage">Preferred target language</label>
+          <select id="llm-target-language"></select>
+        </div>
+        <div class="field">
+          <label for="llm-guidance-mode" data-i18n="options.guidanceMode">Guidance mode</label>
+          <select id="llm-guidance-mode">
+            <option value="default" data-i18n="options.guidanceModeDefault">Use generated default guidance</option>
+            <option value="custom" data-i18n="options.guidanceModeCustom">Use custom guidance</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="include-llm-guidance" data-i18n="options.includeGuidanceWhenCopying">Include guidance when copying</label>
+          <select id="include-llm-guidance">
+            <option value="true" data-i18n="options.includeGuidanceDefault">Included by default</option>
+            <option value="false" data-i18n="options.copyRawScriptOnly">Copy raw script only</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="llm-guidance-text" data-i18n="options.guidanceText">Guidance text</label>
+          <textarea
+            id="llm-guidance-text"
+            data-i18n-placeholder="options.guidancePlaceholder"
+            placeholder="Switch to custom mode to edit the guidance directly."
+          ></textarea>
+        </div>
+        <div class="actions">
+          <button id="save-llm-guidance" data-i18n="options.saveGuidance">Save guidance</button>
+          <button class="secondary" id="reset-llm-guidance" data-i18n="options.restoreDefaultGuidance">Restore default guidance</button>
+        </div>
+        <div class="status" id="llm-guidance-status"></div>
+      </section>
+
+      <section class="card" style="margin-top: 18px">
+        <h2 data-i18n="options.savedScriptLibrary">Saved Script Library</h2>
+        <div class="library-list" id="library-list"></div>
+        <div class="status" id="library-status"></div>
+      </section>
+    </main>
+    <script type="module" src="./options.js"></script>
+  </body>
+</html>

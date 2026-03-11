@@ -1,0 +1,162 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  background: linear-gradient(180deg, #f5f8e9 0%, #f4f5fb 100%);
+  color: #151822;
+  margin: 0;
+}
+
+.page {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 32px 20px 48px;
+}
+
+.hero {
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: 28px;
+  margin: 0 0 8px;
+}
+
+.hero p {
+  color: #4b5166;
+  margin: 0;
+  max-width: 760px;
+}
+
+.grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 18px 40px rgba(36, 42, 60, 0.08);
+  padding: 20px;
+}
+
+.card h2 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.card-copy {
+  color: #5d667f;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 16px;
+  max-width: 760px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field select,
+.field textarea,
+.field input[type="file"],
+.field input[type="range"] {
+  background: #ffffff;
+  border: 1px solid #cfd5e4;
+  border-radius: 14px;
+  color: inherit;
+  font: inherit;
+  padding: 12px 14px;
+}
+
+.field textarea {
+  min-height: 260px;
+  resize: vertical;
+}
+
+.field textarea[readonly] {
+  background: #f6f8fc;
+  color: #4b5166;
+}
+
+.field input[type="range"] {
+  padding: 10px 12px;
+}
+
+.helper {
+  color: #66708a;
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+button {
+  appearance: none;
+  background: #171a21;
+  border: 0;
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 11px 16px;
+}
+
+button.secondary {
+  background: #e8ecf6;
+  color: #111827;
+}
+
+.status {
+  color: #4b5166;
+  font-size: 13px;
+  min-height: 20px;
+  padding-top: 10px;
+}
+
+.library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.library-item {
+  background: #f8f9fd;
+  border: 1px solid #dbe2f0;
+  border-radius: 16px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr auto;
+  padding: 14px;
+}
+
+.library-item-title {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.library-item-meta {
+  color: #66708a;
+  font-size: 12px;
+}
+
+.library-item-actions {
+  display: flex;
+  gap: 8px;
+}

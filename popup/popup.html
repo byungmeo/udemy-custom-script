@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Udemy Custom Script</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <div class="title" data-i18n="common.appName">Udemy Custom Script</div>
+      <div class="subtitle" data-i18n="popup.subtitle">
+        Export the current lecture transcript into the custom JSON-based format
+        and inspect whether a saved script already exists for this page.
+      </div>
+
+      <section class="panel">
+        <div class="label" data-i18n="popup.currentPage">Current Page</div>
+        <div class="value" id="page-summary" data-i18n="popup.checkingActiveTab">
+          Checking the active tab...
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="label" data-i18n="popup.transcriptProbe">Transcript Probe</div>
+        <div class="value" id="transcript-summary" data-i18n="popup.noDataYet">No data yet.</div>
+      </section>
+
+      <section class="panel">
+        <div class="label" data-i18n="popup.savedMatch">Saved Match</div>
+        <div class="value" id="match-summary" data-i18n="popup.noDataYet">No data yet.</div>
+      </section>
+
+      <div class="actions">
+        <button id="refresh" data-i18n="popup.refresh">Refresh</button>
+        <button id="copy-script" data-i18n="popup.copyCustomScript">Copy custom script</button>
+        <button class="secondary" id="open-options" data-i18n="popup.openOptions">Open options</button>
+      </div>
+
+      <div class="footer" id="footer-status"></div>
+    </main>
+
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

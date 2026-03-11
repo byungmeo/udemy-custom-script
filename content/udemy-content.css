@@ -1,0 +1,190 @@
+.udemy-custom-script-root {
+  --udemy-custom-script-translated-font-family: "Segoe UI", system-ui, sans-serif;
+  --udemy-custom-script-source-font-family: "Segoe UI", system-ui, sans-serif;
+  --udemy-custom-script-translated-font-size: 28px;
+  --udemy-custom-script-source-font-size: 22px;
+  --udemy-custom-script-translated-background-opacity: 0.72;
+  --udemy-custom-script-source-background-opacity: 0.56;
+  --udemy-custom-script-translated-padding-x: 16px;
+  --udemy-custom-script-translated-padding-y: 10px;
+  --udemy-custom-script-source-padding-x: 16px;
+  --udemy-custom-script-source-padding-y: 10px;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2147483646;
+}
+
+.udemy-custom-script-subtitles {
+  align-items: center;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  left: 50%;
+  max-width: min(82%, 980px);
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.udemy-custom-script-line {
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+  font-weight: 700;
+  inline-size: fit-content;
+  letter-spacing: 0.01em;
+  line-height: 1.38;
+  max-inline-size: 100%;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.udemy-custom-script-line[data-role="translated"] {
+  background: rgba(10, 10, 18, var(--udemy-custom-script-translated-background-opacity));
+  font-family: var(--udemy-custom-script-translated-font-family);
+  font-size: var(--udemy-custom-script-translated-font-size);
+  padding: var(--udemy-custom-script-translated-padding-y)
+    var(--udemy-custom-script-translated-padding-x);
+}
+
+.udemy-custom-script-line[data-role="source"] {
+  background: rgba(10, 10, 18, var(--udemy-custom-script-source-background-opacity));
+  color: #d7ddff;
+  font-family: var(--udemy-custom-script-source-font-family);
+  font-size: var(--udemy-custom-script-source-font-size);
+  font-weight: 600;
+  padding: var(--udemy-custom-script-source-padding-y)
+    var(--udemy-custom-script-source-padding-x);
+}
+
+.udemy-custom-script-toolbar-item {
+  align-items: center;
+  display: inline-flex;
+  margin-left: 8px;
+  pointer-events: auto;
+  position: relative;
+}
+
+.udemy-custom-script-toolbar-button {
+  appearance: none;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  display: inline-flex;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  min-height: 34px;
+  padding: 0 10px;
+  transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.udemy-custom-script-toolbar-button:hover,
+.udemy-custom-script-toolbar-button[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.udemy-custom-script-toolbar-button[data-script-ready="true"] .udemy-custom-script-toolbar-icon {
+  background: #cfe36b;
+  color: #101010;
+}
+
+.udemy-custom-script-toolbar-icon {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  height: 22px;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  min-width: 22px;
+}
+
+.udemy-custom-script-toolbar-label {
+  white-space: nowrap;
+}
+
+.udemy-custom-script-settings-popover {
+  background: rgba(13, 16, 24, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  bottom: calc(100% + 10px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.34);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 280px;
+  padding: 14px;
+  position: absolute;
+  right: 0;
+  z-index: 2147483647;
+}
+
+.udemy-custom-script-settings-popover[hidden] {
+  display: none;
+}
+
+.udemy-custom-script-settings-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.udemy-custom-script-settings-eyebrow {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.udemy-custom-script-settings-status {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.udemy-custom-script-settings-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.udemy-custom-script-settings-actions button,
+.udemy-custom-script-settings-footer button {
+  appearance: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.udemy-custom-script-settings-actions button[data-active="true"] {
+  background: rgba(207, 227, 107, 0.96);
+  color: #101010;
+}
+
+.udemy-custom-script-settings-footer button.secondary {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.udemy-custom-script-settings-footer {
+  display: flex;
+  justify-content: flex-end;
+}
