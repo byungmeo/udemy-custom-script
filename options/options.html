@@ -16,8 +16,8 @@
         </p>
       </section>
 
-      <section class="grid">
-        <article class="card">
+      <section class="row-grid row-player">
+        <article class="card" id="import-card">
           <h2 data-i18n="options.playerSettings">Player Settings</h2>
           <div class="field">
             <label for="ui-language" data-i18n="options.uiLanguage">Display UI language</label>
@@ -124,6 +124,9 @@
           </div>
         </article>
 
+      </section>
+
+      <section class="row-grid row-script" style="margin-top: 18px">
         <article class="card">
           <h2 data-i18n="options.importScript">Import Script</h2>
           <div class="field">
@@ -144,6 +147,71 @@
           </div>
           <div class="status" id="import-status"></div>
         </article>
+
+        <article class="card" id="library-card">
+          <h2 data-i18n="options.savedScriptLibrary">Saved Script Library</h2>
+          <div class="library-list" id="library-list"></div>
+          <div class="status" id="library-status"></div>
+        </article>
+      </section>
+
+      <section class="card" style="margin-top: 18px">
+        <h2 data-i18n="options.aiProviders">AI Providers</h2>
+        <p class="card-copy" data-i18n="options.aiCardCopy">
+          Configure direct AI translation for this extension. You must create your own API key
+          in the provider dashboard, API billing is separate from ChatGPT subscriptions, and
+          charges may vary by model and token usage.
+        </p>
+        <div class="field">
+          <label for="ai-provider" data-i18n="options.aiProvider">AI provider</label>
+          <select id="ai-provider"></select>
+        </div>
+        <div class="field">
+          <label for="openai-api-key" data-i18n="options.openAiApiKey">OpenAI API key</label>
+          <input
+            id="openai-api-key"
+            type="password"
+            autocomplete="off"
+            data-i18n-placeholder="options.openAiApiKeyPlaceholder"
+            placeholder="sk-..."
+          />
+          <div class="helper" id="openai-api-key-status"></div>
+          <div class="helper" data-i18n="options.openAiApiKeyHelp">
+            Stored locally in this browser profile. Leave the field unchanged to keep the existing key.
+          </div>
+          <div class="helper" data-i18n="options.openAiApiKeyBillingHelp">
+            Create this key yourself in the OpenAI Platform dashboard. Usage may incur charges,
+            and the amount depends on the selected model and token usage.
+          </div>
+        </div>
+        <div class="field">
+          <label for="openai-model-preset" data-i18n="options.openAiModelPreset">OpenAI model preset</label>
+          <select id="openai-model-preset"></select>
+          <div class="helper" id="openai-model-list-status"></div>
+          <div class="helper" data-i18n="options.openAiModelPricingHelp">
+            When shown, prices are current OpenAI list prices per 1M input and output tokens.
+            Cached-input pricing can differ by model.
+          </div>
+        </div>
+        <div class="field">
+          <label for="openai-model" data-i18n="options.customOpenAiModel">Custom OpenAI model</label>
+          <input
+            id="openai-model"
+            type="text"
+            spellcheck="false"
+            data-i18n-placeholder="options.customOpenAiModelPlaceholder"
+            placeholder="Enter a model id"
+          />
+        </div>
+        <div class="helper" data-i18n="options.openAiApiGuidanceHelp">
+          If the LLM Guidance section is set to custom mode, that custom guidance is also appended
+          to AI translation requests.
+        </div>
+        <div class="actions">
+          <button class="secondary" id="refresh-openai-models" data-i18n="options.refreshModelList">Refresh model list</button>
+          <button id="save-provider-settings" data-i18n="options.saveProviderSettings">Save provider settings</button>
+        </div>
+        <div class="status" id="provider-settings-status"></div>
       </section>
 
       <section class="card" style="margin-top: 18px">
@@ -183,12 +251,6 @@
           <button class="secondary" id="reset-llm-guidance" data-i18n="options.restoreDefaultGuidance">Restore default guidance</button>
         </div>
         <div class="status" id="llm-guidance-status"></div>
-      </section>
-
-      <section class="card" style="margin-top: 18px">
-        <h2 data-i18n="options.savedScriptLibrary">Saved Script Library</h2>
-        <div class="library-list" id="library-list"></div>
-        <div class="status" id="library-status"></div>
       </section>
     </main>
     <script type="module" src="./options.js"></script>

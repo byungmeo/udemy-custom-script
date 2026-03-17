@@ -30,10 +30,24 @@ body {
   max-width: 760px;
 }
 
-.grid {
+.row-grid {
   display: grid;
   gap: 18px;
+}
+
+.row-player {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.row-script {
+  grid-template-columns: minmax(420px, 1.2fr) minmax(320px, 0.8fr);
+}
+
+.row-script > .card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .card {
@@ -71,6 +85,8 @@ body {
 
 .field select,
 .field textarea,
+.field input[type="text"],
+.field input[type="password"],
 .field input[type="file"],
 .field input[type="range"] {
   background: #ffffff;
@@ -134,6 +150,13 @@ button.secondary {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.row-script .library-list {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .library-item {
@@ -159,4 +182,10 @@ button.secondary {
 .library-item-actions {
   display: flex;
   gap: 8px;
+}
+
+@media (max-width: 920px) {
+  .row-script {
+    grid-template-columns: 1fr;
+  }
 }

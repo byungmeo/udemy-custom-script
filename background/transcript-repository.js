@@ -23,7 +23,21 @@ function computeHash(input) {
   return (hash >>> 0).toString(16);
 }
 
-export async function saveScriptRecord(parsedScript) {
+function normalizeTranslationProgress(options = {}) {
+  return {
+    isPartial: options?.partialTranslation === true,
+    completedChunks: Number.isFinite(Number(options?.completedChunks))
+      ? Number(options.completedChunks)
+      : 0,
+    totalChunks: Number.isFinite(Number(options?.totalChunks))
+      ? Number(options.totalChunks)
+      : 0,
+    provider: String(options?.provider ?? "").trim(),
+    model: String(options?.model ?? "").trim(),
+  };
+}
+
+export async function saveScriptRecord(parsedScript, options = {}) {
   const db = await openTranscriptDatabase();
   const transaction = db.transaction("scripts", "readwrite");
   const store = transaction.objectStore("scripts");
@@ -32,6 +46,7 @@ export async function saveScriptRecord(parsedScript) {
   const fileName = buildSuggestedFileName(parsedScript.metadata);
   const rawText = parsedScript.normalizedText;
   const hash = computeHash(rawText);
+  const translationProgress = normalizeTranslationProgress(options);
   const record = {
     lookupKey,
     fileName,
@@ -42,6 +57,7 @@ export async function saveScriptRecord(parsedScript) {
     rawText,
     savedAt,
     hash,
+    translationProgress,
   };
 
   await new Promise((resolve, reject) => {
@@ -66,6 +82,7 @@ export async function saveScriptRecord(parsedScript) {
     sectionTitle: parsedScript.metadata.section.title,
     lectureTitle: parsedScript.metadata.lecture.title,
     transcriptLanguage: parsedScript.metadata.transcript.language,
+    translationProgress,
   };
   await setIndexMap(indexMap);
 
@@ -74,6 +91,7 @@ export async function saveScriptRecord(parsedScript) {
     fileName,
     savedAt,
     metadata: parsedScript.metadata,
+    translationProgress,
   };
 }
 

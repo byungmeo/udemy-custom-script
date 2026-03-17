@@ -9,6 +9,7 @@ const UI_MESSAGES = {
     "common.clear": "Clear",
     "common.copy": "Copy",
     "common.delete": "Delete",
+    "common.openai": "OpenAI",
     "common.ready": "Ready.",
     "popup.documentTitle": "Udemy Custom Script",
     "popup.subtitle":
@@ -21,6 +22,8 @@ const UI_MESSAGES = {
     "popup.refresh": "Refresh",
     "popup.copyCustomScript": "Copy custom script",
     "popup.openOptions": "Open options",
+    "popup.translateWithAi": "Translate with AI",
+    "popup.cancelAiTranslation": "Cancel AI translation",
     "popup.activeTabCouldNotBeInspected": "The active tab could not be inspected.",
     "popup.noTranscriptData": "No transcript data available.",
     "popup.noMatchInfo": "No match information available.",
@@ -33,6 +36,7 @@ const UI_MESSAGES = {
     "popup.exportFailed": "Could not export the current lecture script.",
     "popup.unknownLanguage": "unknown language",
     "popup.thisPage": "this page",
+    "popup.thisLecture": "this lecture",
     "popup.cueDetected":
       "{count} cue(s) detected via {source} ({language}).",
     "popup.trackDetected":
@@ -40,6 +44,21 @@ const UI_MESSAGES = {
     "popup.copiedToClipboard":
       "Copied {fileName} ({cueCount} cue(s)){guidanceSuffix} to the clipboard.",
     "popup.guidanceSuffix": " with LLM guidance",
+    "popup.translatingWithAi": "Translating the current lecture with {provider}...",
+    "popup.translationSaved":
+      "Saved translated script {fileName} via {provider} ({cueCount} cue(s)).",
+    "popup.translationRunningPersisted":
+      "AI translation is still running in the background for this lecture.",
+    "popup.translationChunkProgress":
+      "Translating chunk {currentChunk}/{totalChunks} ({completedChunks} completed, {streamedCharacters} characters received for the current chunk).",
+    "popup.translationCancelling": "Cancelling the current AI translation...",
+    "popup.translationCancelled": "The current AI translation was cancelled.",
+    "popup.translationSucceededPersisted":
+      "The latest AI translation for this lecture was saved as {fileName}.",
+    "popup.translationFailedPersisted":
+      "The latest AI translation for this lecture failed: {message}",
+    "popup.confirmOverwriteSavedScript":
+      "A saved script already exists for {fileName}. If this AI translation finishes, it will replace the saved script for this lecture. Continue?",
     "options.documentTitle": "Udemy Custom Script Options",
     "options.heroSubtitle":
       "Manage display preferences, import translated scripts, and inspect the local script library used by the Udemy player overlay.",
@@ -73,7 +92,7 @@ const UI_MESSAGES = {
     "options.importAndSave": "Import and save",
     "options.llmGuidance": "LLM Guidance",
     "options.llmCardCopy":
-      "Control the default translation guidance that is added when you copy a script for GPT, Gemini, or another external LLM.",
+      "Control the default translation guidance that is added when you copy a script for GPT, Gemini, or another external LLM. If you use ChatGPT or a similar tool repeatedly, it can be useful to teach this guidance once in memory and then switch the copy option to raw script only for later runs.",
     "options.preferredTargetLanguage": "Preferred target language",
     "options.guidanceMode": "Guidance mode",
     "options.guidanceModeDefault": "Use generated default guidance",
@@ -87,7 +106,41 @@ const UI_MESSAGES = {
     "options.saveGuidance": "Save guidance",
     "options.restoreDefaultGuidance": "Restore default guidance",
     "options.savedScriptLibrary": "Saved Script Library",
+    "options.aiProviders": "AI Providers",
+    "options.aiCardCopy":
+      "Configure direct AI translation for this extension. You must create your own API key in the provider dashboard, API billing is separate from ChatGPT subscriptions, and charges may vary by model and token usage. If you already subscribe to ChatGPT or a similar service, that product experience may often be better than direct API calls in translation quality, speed, or overall cost, so compare before relying on API translation here.",
+    "options.aiProvider": "AI provider",
+    "options.openAiApiKey": "OpenAI API key",
+    "options.openAiApiKeyHelp":
+      "Stored locally in this browser profile. If a key is already saved, leave this field blank to keep it. Enter a new key only when you want to replace the saved one.",
+    "options.openAiApiKeyBillingHelp":
+      "Create this key yourself in the OpenAI Platform dashboard. Usage may incur charges, and the amount depends on the selected model and token usage.",
+    "options.openAiApiKeyPlaceholder": "sk-...",
+    "options.openAiModel": "OpenAI model",
+    "options.openAiModelPreset": "OpenAI model preset",
+    "options.openAiModelPricingHelp":
+      "When shown, prices are current OpenAI list prices per 1M input and output tokens. Cached-input pricing can differ by model.",
+    "options.openAiApiGuidanceHelp":
+      "If the LLM Guidance section is set to custom mode, that custom guidance is also appended to AI translation requests.",
+    "options.customModel": "Custom model",
+    "options.customOpenAiModel": "Custom OpenAI model",
+    "options.customOpenAiModelPlaceholder": "Enter a model id",
+    "options.refreshModelList": "Refresh model list",
+    "options.refreshingModelList": "Refreshing OpenAI model list...",
+    "options.modelListUpdated": "OpenAI model list updated.",
+    "options.modelListUnavailable":
+      "Using preset models. Add and save an OpenAI API key, then refresh the model list.",
+    "options.modelListReadyWithStoredKey":
+      "Using preset models right now. An API key is already saved, so you can click Refresh model list at any time.",
+    "options.modelListFetchedAt": "Last refreshed: {date}",
+    "options.saveProviderSettings": "Save provider settings",
+    "options.providerSettingsSaved": "Provider settings saved.",
+    "options.openAiApiKeyStored":
+      "An OpenAI API key is already saved in this browser. The stored value is hidden for security.",
+    "options.openAiApiKeyMissing": "No OpenAI API key is currently saved.",
     "options.savedAt": "Saved {date}",
+    "options.partialTranslationProgress":
+      "Partial AI draft: {completedChunks}/{totalChunks} chunks assembled.",
     "targetLanguage.ko": "Korean",
     "targetLanguage.en": "English",
     "targetLanguage.ja": "Japanese",
@@ -141,6 +194,7 @@ const UI_MESSAGES = {
     "common.clear": "비우기",
     "common.copy": "복사",
     "common.delete": "삭제",
+    "common.openai": "OpenAI",
     "common.ready": "준비되었습니다.",
     "popup.documentTitle": "Udemy Custom Script",
     "popup.subtitle":
@@ -153,6 +207,8 @@ const UI_MESSAGES = {
     "popup.refresh": "새로고침",
     "popup.copyCustomScript": "커스텀 스크립트 복사",
     "popup.openOptions": "옵션 열기",
+    "popup.translateWithAi": "AI로 번역",
+    "popup.cancelAiTranslation": "AI 번역 중단",
     "popup.activeTabCouldNotBeInspected": "활성 탭을 확인할 수 없습니다.",
     "popup.noTranscriptData": "대본 데이터가 없습니다.",
     "popup.noMatchInfo": "매칭 정보가 없습니다.",
@@ -165,6 +221,7 @@ const UI_MESSAGES = {
     "popup.exportFailed": "현재 강의 스크립트를 내보낼 수 없습니다.",
     "popup.unknownLanguage": "알 수 없는 언어",
     "popup.thisPage": "현재 페이지",
+    "popup.thisLecture": "현재 강의",
     "popup.cueDetected":
       "{source}에서 {count}개의 cue를 감지했습니다. ({language})",
     "popup.trackDetected":
@@ -172,6 +229,21 @@ const UI_MESSAGES = {
     "popup.copiedToClipboard":
       "{fileName} ({cueCount}개 cue){guidanceSuffix}를 클립보드에 복사했습니다.",
     "popup.guidanceSuffix": "와 LLM 지침",
+    "popup.translatingWithAi": "{provider}로 현재 강의를 번역하는 중...",
+    "popup.translationSaved":
+      "{provider}로 번역한 스크립트 {fileName}을(를) 저장했습니다. ({cueCount}개 cue)",
+    "popup.translationRunningPersisted":
+      "이 강의에 대한 AI 번역이 백그라운드에서 아직 진행 중입니다.",
+    "popup.translationChunkProgress":
+      "{totalChunks}개 중 {currentChunk}번째 청크를 번역 중입니다. 완료 {completedChunks}개, 현재 청크 수신 문자 수 {streamedCharacters}.",
+    "popup.translationCancelling": "현재 AI 번역을 중단하는 중...",
+    "popup.translationCancelled": "현재 AI 번역을 중단했습니다.",
+    "popup.translationSucceededPersisted":
+      "이 강의의 최신 AI 번역 결과가 {fileName}(으)로 저장되었습니다.",
+    "popup.translationFailedPersisted":
+      "이 강의의 최신 AI 번역이 실패했습니다: {message}",
+    "popup.confirmOverwriteSavedScript":
+      "{fileName}에 해당하는 저장된 스크립트가 이미 있습니다. 이번 AI 번역이 완료되면 현재 강의의 저장된 스크립트를 덮어쓰게 됩니다. 계속할까요?",
     "options.documentTitle": "Udemy Custom Script 옵션",
     "options.heroSubtitle":
       "표시 설정을 관리하고, 번역된 스크립트를 가져오고, Udemy 플레이어 오버레이에서 사용하는 로컬 스크립트 라이브러리를 확인합니다.",
@@ -205,7 +277,7 @@ const UI_MESSAGES = {
     "options.importAndSave": "가져와서 저장",
     "options.llmGuidance": "LLM 지침",
     "options.llmCardCopy":
-      "GPT, Gemini 등 외부 LLM에 스크립트를 복사할 때 함께 넣을 기본 번역 지침을 관리합니다.",
+      "GPT, Gemini 등 외부 LLM에 스크립트를 복사할 때 함께 넣을 기본 번역 지침을 관리합니다. ChatGPT 같은 도구를 반복적으로 사용할 경우에는 처음 1회 지침을 메모리에 학습시킨 뒤, 이후에는 복사 시 지침 포함 옵션을 원본 스크립트만 복사로 바꿔 사용하는 것도 좋습니다.",
     "options.preferredTargetLanguage": "기본 번역 목표 언어",
     "options.guidanceMode": "지침 모드",
     "options.guidanceModeDefault": "생성된 기본 지침 사용",
@@ -219,7 +291,41 @@ const UI_MESSAGES = {
     "options.saveGuidance": "지침 저장",
     "options.restoreDefaultGuidance": "기본 지침 복원",
     "options.savedScriptLibrary": "저장된 스크립트 라이브러리",
+    "options.aiProviders": "AI 제공자",
+    "options.aiCardCopy":
+      "이 확장의 직접 AI 번역을 설정합니다. API 키는 제공자 대시보드에서 직접 만들어야 하고, ChatGPT 구독과 별개로 API 요금이 청구될 수 있으며, 비용은 모델과 토큰 사용량에 따라 달라질 수 있습니다. 이미 ChatGPT 같은 서비스를 구독 중이라면, 직접 API를 호출하는 것보다 번역 품질, 속도, 전체 비용 측면에서 더 나은 경우가 많으니 비교해보고 사용하는 것이 좋습니다.",
+    "options.aiProvider": "AI 제공자",
+    "options.openAiApiKey": "OpenAI API 키",
+    "options.openAiApiKeyHelp":
+      "현재 브라우저 프로필의 로컬 저장소에 보관됩니다. 이미 저장된 키가 있다면 이 입력칸을 비워 두면 유지됩니다. 저장된 키를 바꾸고 싶을 때만 새 키를 입력하세요.",
+    "options.openAiApiKeyBillingHelp":
+      "이 키는 OpenAI Platform 대시보드에서 직접 생성해야 합니다. 사용량에 따라 요금이 청구될 수 있으며, 금액은 선택한 모델과 토큰 사용량에 따라 달라집니다.",
+    "options.openAiApiKeyPlaceholder": "sk-...",
+    "options.openAiModel": "OpenAI 모델",
+    "options.openAiModelPreset": "OpenAI 모델 프리셋",
+    "options.openAiModelPricingHelp":
+      "표시되는 가격은 알 수 있는 경우 현재 OpenAI 공식 가격 기준의 1M 입력/출력 토큰 단가입니다. 캐시 입력 단가는 모델마다 다를 수 있습니다.",
+    "options.openAiApiGuidanceHelp":
+      "LLM 지침 섹션이 사용자 지정 모드인 경우, 그 사용자 지정 지침도 AI 번역 API 요청에 함께 첨부됩니다.",
+    "options.customModel": "사용자 지정 모델",
+    "options.customOpenAiModel": "사용자 지정 OpenAI 모델",
+    "options.customOpenAiModelPlaceholder": "모델 ID를 입력하세요",
+    "options.refreshModelList": "모델 목록 새로고침",
+    "options.refreshingModelList": "OpenAI 모델 목록을 새로고침하는 중...",
+    "options.modelListUpdated": "OpenAI 모델 목록을 업데이트했습니다.",
+    "options.modelListUnavailable":
+      "프리셋 모델을 사용 중입니다. OpenAI API 키를 추가하고 저장한 뒤 모델 목록을 새로고침하세요.",
+    "options.modelListReadyWithStoredKey":
+      "현재는 프리셋 모델을 사용 중입니다. API 키는 이미 저장되어 있으니 언제든 모델 목록 새로고침을 누르면 됩니다.",
+    "options.modelListFetchedAt": "마지막 새로고침: {date}",
+    "options.saveProviderSettings": "제공자 설정 저장",
+    "options.providerSettingsSaved": "제공자 설정을 저장했습니다.",
+    "options.openAiApiKeyStored":
+      "이 브라우저에 OpenAI API 키가 이미 저장되어 있습니다. 보안상 저장된 값은 표시하지 않습니다.",
+    "options.openAiApiKeyMissing": "현재 저장된 OpenAI API 키가 없습니다.",
     "options.savedAt": "저장 시각 {date}",
+    "options.partialTranslationProgress":
+      "부분 AI 초안: 전체 {totalChunks}개 중 {completedChunks}개 청크를 조립했습니다.",
     "targetLanguage.ko": "한국어",
     "targetLanguage.en": "영어",
     "targetLanguage.ja": "일본어",

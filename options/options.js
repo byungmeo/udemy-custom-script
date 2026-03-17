@@ -5,6 +5,12 @@ import {
   LLM_TARGET_LANGUAGE_OPTIONS,
 } from "../shared/llm-guidance.js";
 import {
+  AI_PROVIDER_OPTIONS,
+  CUSTOM_OPENAI_MODEL_VALUE,
+  formatOpenAiModelLabel,
+  OPENAI_MODEL_OPTIONS,
+} from "../shared/ai-providers.js";
+import {
   applyTranslations,
   getUiLanguageOptions,
   normalizeUiLanguage,
@@ -46,6 +52,15 @@ const elements = {
   sourcePaddingYValue: document.querySelector("#source-padding-y-value"),
   saveSettings: document.querySelector("#save-settings"),
   settingsStatus: document.querySelector("#settings-status"),
+  aiProvider: document.querySelector("#ai-provider"),
+  openAiApiKey: document.querySelector("#openai-api-key"),
+  openAiApiKeyStatus: document.querySelector("#openai-api-key-status"),
+  openAiModelPreset: document.querySelector("#openai-model-preset"),
+  openAiModelListStatus: document.querySelector("#openai-model-list-status"),
+  openAiModel: document.querySelector("#openai-model"),
+  refreshOpenAiModels: document.querySelector("#refresh-openai-models"),
+  saveProviderSettings: document.querySelector("#save-provider-settings"),
+  providerSettingsStatus: document.querySelector("#provider-settings-status"),
   llmTargetLanguage: document.querySelector("#llm-target-language"),
   llmGuidanceMode: document.querySelector("#llm-guidance-mode"),
   includeLlmGuidance: document.querySelector("#include-llm-guidance"),
@@ -58,6 +73,8 @@ const elements = {
   importScript: document.querySelector("#import-script"),
   clearImport: document.querySelector("#clear-import"),
   importStatus: document.querySelector("#import-status"),
+  importCard: document.querySelector("#import-card"),
+  libraryCard: document.querySelector("#library-card"),
   libraryList: document.querySelector("#library-list"),
   libraryStatus: document.querySelector("#library-status"),
 };
@@ -65,6 +82,9 @@ const elements = {
 let currentSettings = null;
 let customGuidanceDraft = "";
 let currentLanguage = "en";
+let providerSettings = null;
+let remoteOpenAiModels = [];
+let scriptRowResizeObserver = null;
 
 function setStatus(target, text, isError = false) {
   target.textContent = text;
@@ -83,6 +103,71 @@ function populateUiLanguageOptions() {
   }
 
   elements.uiLanguage.value = value || currentLanguage;
+}
+
+function populateAiProviderOptions() {
+  const value = elements.aiProvider.value;
+  elements.aiProvider.replaceChildren();
+
+  for (const option of AI_PROVIDER_OPTIONS) {
+    const element = document.createElement("option");
+    element.value = option.value;
+    element.textContent =
+      option.value === "openai" ? t(currentLanguage, "common.openai") : option.label;
+    elements.aiProvider.appendChild(element);
+  }
+
+  elements.aiProvider.value = value || "openai";
+}
+
+function populateOpenAiModelOptions() {
+  const value = elements.openAiModelPreset.value;
+  elements.openAiModelPreset.replaceChildren();
+
+  const mergedOptions = [...OPENAI_MODEL_OPTIONS];
+  const knownValues = new Set(mergedOptions.map((option) => option.value));
+
+  for (const remoteModel of remoteOpenAiModels) {
+    if (!knownValues.has(remoteModel)) {
+      mergedOptions.splice(mergedOptions.length - 1, 0, {
+        value: remoteModel,
+        label: remoteModel,
+      });
+      knownValues.add(remoteModel);
+    }
+  }
+
+  for (const option of mergedOptions) {
+    const element = document.createElement("option");
+    element.value = option.value;
+    element.textContent =
+      option.value === CUSTOM_OPENAI_MODEL_VALUE
+        ? t(currentLanguage, "options.customModel")
+        : formatOpenAiModelLabel(option.value) || option.label;
+    elements.openAiModelPreset.appendChild(element);
+  }
+
+  elements.openAiModelPreset.value = value || OPENAI_MODEL_OPTIONS[0].value;
+}
+
+function getKnownOpenAiModelValues() {
+  return new Set(
+    [...OPENAI_MODEL_OPTIONS.map((option) => option.value), ...remoteOpenAiModels].filter(
+      (value) => value !== CUSTOM_OPENAI_MODEL_VALUE
+    )
+  );
+}
+
+function syncOpenAiModelSelection(model) {
+  const normalizedModel = String(model ?? "").trim();
+  const knownValues = getKnownOpenAiModelValues();
+  const isKnownModel = normalizedModel && knownValues.has(normalizedModel);
+
+  elements.openAiModelPreset.value = isKnownModel
+    ? normalizedModel
+    : CUSTOM_OPENAI_MODEL_VALUE;
+  elements.openAiModel.disabled = isKnownModel;
+  elements.openAiModel.value = normalizedModel;
 }
 
 function populateTargetLanguageOptions() {
@@ -105,10 +190,13 @@ function applyOptionsLanguage(language) {
   document.title = t(currentLanguage, "options.documentTitle");
   applyTranslations(document.body, currentLanguage);
   populateUiLanguageOptions();
+  populateAiProviderOptions();
+  populateOpenAiModelOptions();
   populateTargetLanguageOptions();
   renderPlayerSettingSummaries();
   renderGuidanceEditor();
   renderLibrary();
+  renderProviderState();
 }
 
 function renderPlayerSettingSummaries() {
@@ -158,6 +246,50 @@ function renderPlayerSettingSummaries() {
   });
 }
 
+function syncScriptRowHeights() {
+  const importCard = elements.importCard;
+  const libraryCard = elements.libraryCard;
+  const libraryList = elements.libraryList;
+  const libraryStatus = elements.libraryStatus;
+
+  if (!importCard || !libraryCard || !libraryList || !libraryStatus) {
+    return;
+  }
+
+  if (window.innerWidth <= 920) {
+    libraryCard.style.height = "";
+    libraryList.style.maxHeight = "";
+    return;
+  }
+
+  const importHeight = importCard.offsetHeight;
+  if (!importHeight) {
+    return;
+  }
+
+  libraryCard.style.height = `${importHeight}px`;
+
+  const title = libraryCard.querySelector("h2");
+  const titleHeight = title ? title.offsetHeight : 0;
+  const statusHeight = libraryStatus.offsetHeight;
+  const cardStyle = window.getComputedStyle(libraryCard);
+  const listStyle = window.getComputedStyle(libraryList);
+  const cardPaddingTop = Number.parseFloat(cardStyle.paddingTop || "0");
+  const cardPaddingBottom = Number.parseFloat(cardStyle.paddingBottom || "0");
+  const listGap = Number.parseFloat(listStyle.rowGap || listStyle.gap || "0");
+  const availableHeight =
+    importHeight -
+    cardPaddingTop -
+    cardPaddingBottom -
+    titleHeight -
+    statusHeight -
+    10 -
+    10 -
+    listGap;
+
+  libraryList.style.maxHeight = `${Math.max(180, Math.floor(availableHeight))}px`;
+}
+
 function renderGuidanceEditor() {
   const mode = elements.llmGuidanceMode.value;
   const targetLanguage = elements.llmTargetLanguage.value;
@@ -185,6 +317,8 @@ function applySettingsToForm(settings) {
   elements.overlayEnabled.value = String(settings.overlayEnabled);
   elements.subtitleBottomOffset.value = String(settings.subtitleBottomOffset);
   elements.subtitleLineGap.value = String(settings.subtitleLineGap);
+  elements.aiProvider.value = settings.aiProvider;
+  elements.openAiModel.value = settings.openAiModel;
   elements.translatedFontFamily.value = settings.translatedFontFamily;
   elements.translatedFontSize.value = String(settings.translatedFontSize);
   elements.translatedBackgroundOpacity.value = String(
@@ -205,6 +339,37 @@ function applySettingsToForm(settings) {
 
   renderPlayerSettingSummaries();
   renderGuidanceEditor();
+  syncScriptRowHeights();
+}
+
+function renderProviderState() {
+  if (!elements.openAiApiKeyStatus) {
+    return;
+  }
+
+  const hasOpenAiApiKey = Boolean(providerSettings?.hasOpenAiApiKey);
+  elements.openAiApiKeyStatus.textContent = hasOpenAiApiKey
+    ? t(currentLanguage, "options.openAiApiKeyStored")
+    : t(currentLanguage, "options.openAiApiKeyMissing");
+
+  if (providerSettings?.openAiModelsFetchedAt) {
+    elements.openAiModelListStatus.textContent = t(
+      currentLanguage,
+      "options.modelListFetchedAt",
+      {
+        date: new Date(providerSettings.openAiModelsFetchedAt).toLocaleString(
+          currentLanguage
+        ),
+      }
+    );
+  } else {
+    elements.openAiModelListStatus.textContent = t(
+      currentLanguage,
+      hasOpenAiApiKey
+        ? "options.modelListReadyWithStoredKey"
+        : "options.modelListUnavailable"
+    );
+  }
 }
 
 async function loadSettings() {
@@ -223,6 +388,29 @@ async function loadSettings() {
   }
 
   applySettingsToForm(response.settings);
+}
+
+async function loadProviderSettings() {
+  const response = await chrome.runtime.sendMessage({
+    type: MESSAGE_TYPES.BACKGROUND_GET_PROVIDER_SETTINGS,
+  });
+
+  if (!response?.ok) {
+    setStatus(
+      elements.providerSettingsStatus,
+      t(currentLanguage, "options.failedToLoadSettings"),
+      true
+    );
+    return;
+  }
+
+  providerSettings = response.providerSettings;
+  remoteOpenAiModels = providerSettings.openAiModels || [];
+  elements.aiProvider.value = providerSettings.aiProvider;
+  populateOpenAiModelOptions();
+  syncOpenAiModelSelection(providerSettings.openAiModel);
+  elements.openAiApiKey.value = "";
+  renderProviderState();
 }
 
 async function persistSettings(nextSettings, statusTarget, successMessageKey) {
@@ -271,6 +459,97 @@ async function savePlayerSettings() {
     getPlayerSettingsFromForm(),
     elements.settingsStatus,
     "options.playerSettingsSaved"
+  );
+}
+
+async function saveProviderSettings() {
+  const selectedModelPreset = elements.openAiModelPreset.value;
+  const resolvedModel =
+    selectedModelPreset === CUSTOM_OPENAI_MODEL_VALUE
+      ? elements.openAiModel.value.trim()
+      : selectedModelPreset;
+
+  if (!resolvedModel) {
+    setStatus(
+      elements.providerSettingsStatus,
+      t(currentLanguage, "options.failedToSaveSettings"),
+      true
+    );
+    return;
+  }
+
+  const payload = {
+    aiProvider: elements.aiProvider.value,
+    openAiModel: resolvedModel,
+  };
+
+  const nextApiKey = elements.openAiApiKey.value.trim();
+  if (nextApiKey) {
+    payload.openAiApiKey = nextApiKey;
+  }
+
+  const response = await chrome.runtime.sendMessage({
+    type: MESSAGE_TYPES.BACKGROUND_UPDATE_PROVIDER_SETTINGS,
+    payload,
+  });
+
+  if (!response?.ok) {
+    setStatus(
+      elements.providerSettingsStatus,
+      response.error?.message || t(currentLanguage, "options.failedToSaveSettings"),
+      true
+    );
+    return;
+  }
+
+  providerSettings = response.providerSettings;
+  remoteOpenAiModels = providerSettings.openAiModels || remoteOpenAiModels;
+  elements.openAiApiKey.value = "";
+  currentSettings = {
+    ...(currentSettings || {}),
+    aiProvider: providerSettings.aiProvider,
+    openAiModel: providerSettings.openAiModel,
+  };
+  populateOpenAiModelOptions();
+  syncOpenAiModelSelection(providerSettings.openAiModel);
+  renderProviderState();
+  setStatus(
+    elements.providerSettingsStatus,
+    t(currentLanguage, "options.providerSettingsSaved")
+  );
+}
+
+async function refreshOpenAiModels() {
+  setStatus(
+    elements.providerSettingsStatus,
+    t(currentLanguage, "options.refreshingModelList")
+  );
+
+  const response = await chrome.runtime.sendMessage({
+    type: MESSAGE_TYPES.BACKGROUND_REFRESH_OPENAI_MODELS,
+  });
+
+  if (!response?.ok) {
+    setStatus(
+      elements.providerSettingsStatus,
+      response.error?.message || t(currentLanguage, "options.failedToLoadSettings"),
+      true
+    );
+    return;
+  }
+
+  remoteOpenAiModels = response.models || [];
+  providerSettings = {
+    ...(providerSettings || {}),
+    openAiModels: remoteOpenAiModels,
+    openAiModelsFetchedAt: response.fetchedAt,
+  };
+  populateOpenAiModelOptions();
+  syncOpenAiModelSelection(elements.openAiModel.value);
+  renderProviderState();
+  setStatus(
+    elements.providerSettingsStatus,
+    t(currentLanguage, "options.modelListUpdated")
   );
 }
 
@@ -326,6 +605,17 @@ function renderLibrary() {
   );
 
   for (const item of libraryItems) {
+    const translationProgress = item.translationProgress || {};
+    const partialProgressMarkup = translationProgress.isPartial
+      ? `<div class="library-item-meta">${t(
+          currentLanguage,
+          "options.partialTranslationProgress",
+          {
+            completedChunks: translationProgress.completedChunks || 0,
+            totalChunks: translationProgress.totalChunks || 0,
+          }
+        )}</div>`
+      : "";
     const row = document.createElement("div");
     row.className = "library-item";
     row.innerHTML = `
@@ -333,6 +623,7 @@ function renderLibrary() {
         <div class="library-item-title">${item.courseTitle} / ${item.lectureTitle}</div>
         <div class="library-item-meta">${item.sectionTitle}</div>
         <div class="library-item-meta">${item.lookupKey}</div>
+        ${partialProgressMarkup}
         <div class="library-item-meta">${t(currentLanguage, "options.savedAt", {
           date: new Date(item.savedAt).toLocaleString(currentLanguage),
         })}</div>
@@ -344,6 +635,8 @@ function renderLibrary() {
     `;
     elements.libraryList.appendChild(row);
   }
+
+  syncScriptRowHeights();
 }
 
 async function loadLibrary() {
@@ -441,6 +734,27 @@ elements.saveSettings.addEventListener("click", () => {
   void savePlayerSettings();
 });
 
+elements.saveProviderSettings.addEventListener("click", () => {
+  void saveProviderSettings();
+});
+
+elements.refreshOpenAiModels.addEventListener("click", () => {
+  void refreshOpenAiModels();
+});
+
+elements.openAiModelPreset.addEventListener("change", () => {
+  const selectedModelPreset = elements.openAiModelPreset.value;
+  const isCustom = selectedModelPreset === CUSTOM_OPENAI_MODEL_VALUE;
+
+  elements.openAiModel.disabled = !isCustom;
+  if (!isCustom) {
+    elements.openAiModel.value = selectedModelPreset;
+    return;
+  }
+
+  elements.openAiModel.focus();
+});
+
 elements.saveLlmGuidance.addEventListener("click", () => {
   if (elements.llmGuidanceMode.value === "custom") {
     customGuidanceDraft = elements.llmGuidanceText.value.trim();
@@ -496,6 +810,7 @@ elements.importFile.addEventListener("change", async (event) => {
       fileName: file.name,
     })
   );
+  syncScriptRowHeights();
 });
 
 for (const input of [
@@ -533,6 +848,17 @@ elements.libraryList.addEventListener("click", (event) => {
   }
 });
 
+window.addEventListener("resize", syncScriptRowHeights);
+
+if ("ResizeObserver" in window && elements.importCard) {
+  scriptRowResizeObserver = new ResizeObserver(() => {
+    syncScriptRowHeights();
+  });
+  scriptRowResizeObserver.observe(elements.importCard);
+}
+
 applyOptionsLanguage("en");
 await loadSettings();
+await loadProviderSettings();
 await loadLibrary();
+syncScriptRowHeights();

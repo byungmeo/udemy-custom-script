@@ -4,6 +4,10 @@ export const CUSTOM_SCRIPT_METADATA_END = "<<<END_METADATA>>>";
 export const STORAGE_KEYS = {
   SETTINGS: "settings",
   SCRIPT_INDEX: "script_index",
+  PROVIDER_SECRETS: "provider_secrets",
+  PROVIDER_CACHE: "provider_cache",
+  TRANSLATION_JOBS: "translation_jobs",
+  TRANSLATION_SESSIONS: "translation_sessions",
 };
 
 export const DEFAULT_SETTINGS = {
@@ -27,6 +31,8 @@ export const DEFAULT_SETTINGS = {
   llmTargetLanguage: "ko",
   llmGuidanceMode: "default",
   llmTranslationGuidance: "",
+  aiProvider: "openai",
+  openAiModel: "gpt-5-mini",
 };
 
 export const MESSAGE_TYPES = {
@@ -39,6 +45,11 @@ export const MESSAGE_TYPES = {
   BACKGROUND_DELETE_SCRIPT: "background:delete-script",
   BACKGROUND_GET_SETTINGS: "background:get-settings",
   BACKGROUND_UPDATE_SETTINGS: "background:update-settings",
+  BACKGROUND_GET_PROVIDER_SETTINGS: "background:get-provider-settings",
+  BACKGROUND_UPDATE_PROVIDER_SETTINGS: "background:update-provider-settings",
+  BACKGROUND_REFRESH_OPENAI_MODELS: "background:refresh-openai-models",
+  BACKGROUND_TRANSLATE_ACTIVE_TAB_SCRIPT: "background:translate-active-tab-script",
+  BACKGROUND_CANCEL_ACTIVE_TAB_TRANSLATION: "background:cancel-active-tab-translation",
   BACKGROUND_RESOLVE_PAGE_SCRIPT: "background:resolve-page-script",
   BACKGROUND_FETCH_RESOURCE: "background:fetch-resource",
   BACKGROUND_OPEN_OPTIONS_PAGE: "background:open-options-page",

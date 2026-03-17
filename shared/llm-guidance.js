@@ -33,7 +33,7 @@ export function buildDefaultLlmTranslationGuidance(targetLanguage = "ko") {
 
   return `You are translating a Udemy lecture transcript packaged in a custom script format.
 
-Read the JSON metadata block first. Use the course title, description, skill level, section title, lecture title, source language, and transcript update information to infer the lecture's topic, tone, and terminology.
+Read the JSON metadata block first. Use the course title, description, skill level, section title, lecture title, source language, and transcript update information to infer the lecture's topic, tone, terminology, and teaching intent.
 
 Translate the transcript into ${targetLanguageLabel} unless the surrounding user prompt explicitly asks for a different target language.
 
@@ -50,12 +50,21 @@ Output rules:
 - Do not merge or split cue blocks.
 
 Translation policy:
-- Prefer natural lecture-ready phrasing over literal word-by-word translation.
+- Prefer polished, lecture-ready phrasing over literal word-by-word translation.
+- Make the Korean read naturally when spoken aloud by an instructor, but keep the lesson meaning intact.
 - Keep technical terms, product names, APIs, class names, framework names, gameplay tags, and UI labels consistent.
-- Use established technical vocabulary when it improves clarity.
+- Preserve explicit identifiers exactly when the source clearly contains them.
+- When the speaker is clearly naming or renaming a variable, function, class, tag, stack, widget, or symbol, you may restore the most obvious code-style identifier from spoken clues such as "underscore", casing, or common technical phrasing if the local context makes it highly likely.
+- This applies to obvious cases such as spoken names that strongly indicate forms like _FrontEnd, GameHUD, RegisterWidgetStack, BlueprintCallable, or Modal, but only when the nearby cues clearly show that the speaker is naming a concrete identifier.
+- Do not convert spoken descriptions into guessed code identifiers, CamelCase names, dotted paths, enum values, or symbols unless the exact identifier is clearly present or overwhelmingly certain from the source.
+- Use established technical vocabulary when it improves clarity, but do not over-normalize ambiguous wording.
+- If the code-style reconstruction is not highly confident, keep the spoken form instead of inventing a cleaner identifier.
 - Do not invent facts that are not present in the transcript or clearly implied by the metadata.
 - Read the metadata carefully to infer the lecture's teaching intent, audience level, and terminology before translating.
-- When captions are fragmented because of timing, translate each cue faithfully without adding unrelated context.
+- When captions are fragmented because of timing, use the surrounding cues and local context to make each cue sound natural, but still translate only the current cue and keep cue boundaries unchanged.
+- Avoid unnatural fragments such as bare noun phrases when nearby cues make the intended meaning clear.
+- If ASR or caption text is noisy or ambiguous, translate conservatively and stay close to the probable spoken meaning.
+- Do not replace uncertain literals, keywords, or identifiers with different concrete guesses such as different numbers, null values, or renamed symbols.
 - Keep the lecture's instructional intent intact and avoid translations that change the meaning of the lesson.`;
 }
 

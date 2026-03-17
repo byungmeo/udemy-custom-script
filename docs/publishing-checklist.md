@@ -9,6 +9,8 @@
 - Verify that all default strings and statuses are correct in both English and Korean
 - Confirm that non-captioned lectures fail gracefully
 - Confirm that saved scripts re-attach correctly after page reload and SPA lecture navigation
+- Confirm that direct AI translation survives popup close/service-worker interruption as far as the current recovery design allows
+- Confirm that partial AI draft saving never overwrites an existing completed saved script mid-run
 
 ## Package Preparation
 
@@ -20,6 +22,7 @@
 ## Store Submission Material
 
 - Final extension name
+- Final localized extension names for supported locales
 - Final short summary
 - Final detailed description
 - `_locales/en/messages.json` and `_locales/ko/messages.json` checked against the final manifest metadata
@@ -33,6 +36,9 @@
 - Captioned lecture export
 - Non-captioned lecture handling
 - Import translated script
+- Direct AI translation with a valid API key
+- Direct AI translation failure states such as missing key, billing/quota errors, and cancel
+- Chunk progress, recovery, and final assembly during direct AI translation
 - Saved script match after lecture revisit
 - In-player subtitle rendering
 - Translation-only mode
@@ -47,3 +53,4 @@
 - Reload the unpacked extension
 - Refresh Udemy tabs
 - Re-check export, import, and player rendering flows
+- Re-check direct AI translation if `https://api.openai.com/*` or localized manifest metadata changed
