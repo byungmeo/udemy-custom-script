@@ -3,14 +3,37 @@ import { buildSuggestedFileName } from "../shared/lookup-key.js";
 import { openTranscriptDatabase } from "./transcript-storage.js";
 
 async function getIndexMap() {
-  const stored = await chrome.storage.sync.get(STORAGE_KEYS.SCRIPT_INDEX);
-  return stored[STORAGE_KEYS.SCRIPT_INDEX] || {};
+  const localStored = await chrome.storage.local.get(STORAGE_KEYS.SCRIPT_INDEX);
+  const localIndexMap = localStored[STORAGE_KEYS.SCRIPT_INDEX] || {};
+  if (Object.keys(localIndexMap).length) {
+    return localIndexMap;
+  }
+
+  const syncStored = await chrome.storage.sync.get(STORAGE_KEYS.SCRIPT_INDEX);
+  const syncIndexMap = syncStored[STORAGE_KEYS.SCRIPT_INDEX] || {};
+  if (Object.keys(syncIndexMap).length) {
+    await chrome.storage.local.set({
+      [STORAGE_KEYS.SCRIPT_INDEX]: syncIndexMap,
+    });
+  }
+
+  return syncIndexMap;
 }
 
 async function setIndexMap(indexMap) {
-  await chrome.storage.sync.set({
+  await chrome.storage.local.set({
     [STORAGE_KEYS.SCRIPT_INDEX]: indexMap,
   });
+
+  try {
+    await chrome.storage.sync.set({
+      [STORAGE_KEYS.SCRIPT_INDEX]: indexMap,
+    });
+  } catch (error) {
+    console.warn("[UCS][Storage] Script index sync mirror failed", {
+      message: error?.message || "Unknown storage sync failure.",
+    });
+  }
 }
 
 function computeHash(input) {

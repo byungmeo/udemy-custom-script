@@ -75,7 +75,7 @@ The manual copy/import workflow remains a first-class path even when direct AI t
 
 - The extension stores settings and saved scripts in the browser.
 - OpenAI API keys are stored locally in the current browser profile.
-- Script index metadata is stored in `chrome.storage.sync`.
+- Script index metadata is stored locally and mirrored to `chrome.storage.sync` when quota allows.
 - Full script bodies are stored locally in `IndexedDB`.
 - Translation jobs and resumable AI translation sessions are stored in browser storage while a translation is in progress.
 - The extension does not require a custom backend service.
